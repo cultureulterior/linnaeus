@@ -4,6 +4,7 @@ import (
 	"github.com/mitchellh/goamz/aws"
 	"github.com/mitchellh/goamz/ec2"
 	"fmt"
+	"os"
 	"strings"
 	"regexp"
 	"log"
@@ -39,6 +40,9 @@ func main() {
 		for _,rtag:= range resp.Tags {
 			data["tags_"+re.ReplaceAllString(rtag.Tag.Key,"_")]=rtag.Tag.Value
 		}
+	        fmt.Fprintf(os.Stderr, "Read %d tags\n", len(resp.Tags))
+	} else {
+	     fmt.Fprintf(os.Stderr, "Error reading tags '%q'\n", err)
 	}
 	jsonString, err := json.Marshal(data)
 	if out != nil && *out != "-" {
