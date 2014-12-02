@@ -37,7 +37,7 @@ func main() {
 	filter := ec2.NewFilter()
 	filter.Add("resource-id", data["instance_id"])
 
-	for i := 0; i < *wait; i++ {
+	for i := 0; i < (*wait+1); i++ {
 		resp, err := client.Tags(filter)
 		if err == nil {
 			for _, rtag := range resp.Tags {
