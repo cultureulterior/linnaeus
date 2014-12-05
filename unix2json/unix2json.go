@@ -15,12 +15,14 @@ var out = flag.String("out", "-", "Outfile")
 func main() {
 	flag.Parse()
 	data := make(map[string]int64)
-	m_junk, err := ioutil.ReadFile("/proc/meminfo")
-	c_junk, err := ioutil.ReadFile("/proc/cpuinfo")
-	m_regex := regexp.MustCompile("MemTotal:[[:space:]]+([0-9]+)")
-	c_regex := regexp.MustCompile("^processor")
-	data["memory"], err = strconv.ParseInt(m_regex.FindStringSubmatch(string(m_junk))[1], 10, 64)
-	data["cpus"] = int64(len(c_regex.FindAllIndex(c_junk, -1)))
+	if m_junk, err := ioutil.ReadFile("/proc/meminfo"); err==nil {
+		m_regex := regexp.MustCompile("MemTotal:[[:space:]]+([0-9]+)")		
+		data["memory"], err = strconv.ParseInt(m_regex.FindStringSubmatch(string(m_junk))[1], 10, 64)
+	} else { log.Fatal(err) }
+	if c_junk, err := ioutil.ReadFile("/proc/cpuinfo"); err==nil {
+		c_regex := regexp.MustCompile("^processor")	
+		data["cpus"] = int64(len(c_regex.FindAllIndex(c_junk, -1)))
+	} else { log.Fatal(err) }
 	jsonString, err := json.Marshal(data)
 	if err != nil {
 		log.Fatal(err)
